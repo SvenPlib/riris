@@ -178,13 +178,16 @@ bcrypt bo uporabljen za zgoščevanje uporabniških gesel pred shranjevanjem v p
 Za lokalni razvoj in zagon aplikacije bodo uporabljene tehnologije:
 
 - Docker,
-- npm.
+- npm,
+- Nodemon.
 
 čelni, zaledni del in podatkovna baza bodo zagnani v ločenih Docker vsebnikih.
 
 Docker Compose bo uporabljen za skupni zagon in upravljanje vseh delov aplikacije.
 
 npm bo uporabljen za upravljanje knjižnic čelnega in zalednega dela aplikacije.
+
+Nodemon bo uporabljen v zalednem delu aplikacije za samodejni ponovni zagon Node.js strežnika ob spremembah izvorne kode med razvojem.
 
 Za trajno shranjevanje naloženih fotografij bo uporabljen Docker volume, ki bo povezan z vsebnikom zalednega dela aplikacije.
 
@@ -205,3 +208,5 @@ Docker volume za shranjevanje fotografij -> fotografije servisnih zahtevkov bodo
 REST API -> komunikacija med frontend in backend delom aplikacije bo potekala preko REST API-ja z uporabo HTTP zahtevkov. Tak pristop omogoča jasno ločitev uporabniškega vmesnika od poslovne logike ter neodvisen razvoj frontenda in backenda.
 
 Email obveščanje z Nodemailer -> backend bo ob spremembah statusa servisnega zahtevka pošiljal email obvestila uporabnikom. Za pošiljanje bo uporabljen Nodemailer preko SMTP, ker omogoča neposredno integracijo z Node.js backendom.
+
+Nodemon -> uporabljen bo v razvojnem okolju za spremljanje sprememb v izvorni kodi zalednega dela in samodejni ponovni zagon Node.js procesa. V kombinaciji z Docker bind mountom omogoča, da se spremembe kode med razvojem takoj odrazijo v delujoči aplikaciji brez ročnega ponovnega zaganjanja vsebnika.
