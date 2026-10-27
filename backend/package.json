@@ -8,5 +8,12 @@
     "multer": "^2.5.0",
     "nodemailer": "^10.2.1",
     "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --legacy-watch src/server.js"
   }
 }
