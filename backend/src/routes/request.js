@@ -73,11 +73,10 @@ router.post(
 router.get(
   "/",
   authenticateToken,
-  authorizeRoles("CUSTOMER"),
+  authorizeRoles("CUSTOMER", "TECHNICIAN"),
   async (req, res) => {
     try {
-      const result = await pool.query(
-        `
+      let query = `
         SELECT
           id,
           title,
@@ -91,11 +90,23 @@ router.get(
           customer_id,
           technician_id
         FROM service_requests
-        WHERE customer_id = $1
-        ORDER BY created_at DESC
-        `,
-        [req.user.id],
-      );
+      `;
+
+      let values = [];
+
+      if (req.user.role === "CUSTOMER") {
+        query += " WHERE customer_id = $1";
+        values = [req.user.id];
+      }
+
+      if (req.user.role === "TECHNICIAN") {
+        query += " WHERE technician_id = $1";
+        values = [req.user.id];
+      }
+
+      query += " ORDER BY created_at DESC";
+
+      const result = await pool.query(query, values);
 
       return res.status(200).json({
         requests: result.rows,
