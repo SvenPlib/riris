@@ -70,4 +70,44 @@ router.post(
   },
 );
 
+router.get(
+  "/",
+  authenticateToken,
+  authorizeRoles("CUSTOMER"),
+  async (req, res) => {
+    try {
+      const result = await pool.query(
+        `
+        SELECT
+          id,
+          title,
+          description,
+          appliance_type,
+          brand,
+          model,
+          status,
+          created_at,
+          updated_at,
+          customer_id,
+          technician_id
+        FROM service_requests
+        WHERE customer_id = $1
+        ORDER BY created_at DESC
+        `,
+        [req.user.id],
+      );
+
+      return res.status(200).json({
+        requests: result.rows,
+      });
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        message: "Napaka pri pridobivanju servisnih zahtevkov.",
+      });
+    }
+  },
+);
+
 module.exports = router;
