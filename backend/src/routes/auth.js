@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../db");
 const jwt = require("jsonwebtoken");
+const { authenticateToken } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -123,6 +124,18 @@ router.post("/login", async (req, res) => {
       message: "Napaka na strežniku.",
     });
   }
+});
+
+router.get("/me", authenticateToken, (req, res) => {
+  return res.status(200).json({
+    user: {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+    },
+  });
 });
 
 module.exports = router;
