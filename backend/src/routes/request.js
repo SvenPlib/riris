@@ -2,6 +2,15 @@ const express = require("express");
 const pool = require("../db");
 const { authenticateToken, authorizeRoles } = require("../middleware/auth");
 
+const allowedApplianceTypes = [
+  "REFRIGERATOR",
+  "WASHING_MACHINE",
+  "DISHWASHER",
+  "DRYER",
+  "OVEN",
+  "FREEZER",
+];
+
 const router = express.Router();
 
 router.post(
@@ -14,6 +23,12 @@ router.post(
     if (!title || !description || !applianceType || !brand || !model) {
       return res.status(400).json({
         message: "Vsa polja so obvezna.",
+      });
+    }
+
+    if (!allowedApplianceTypes.includes(applianceType)) {
+      return res.status(400).json({
+        message: "Neveljavna vrsta aparata.",
       });
     }
 
