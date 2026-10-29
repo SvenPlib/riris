@@ -1,0 +1,145 @@
+.requests-page {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 55px 30px;
+}
+
+.requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.requests-header h2 {
+  margin: 0;
+  font-size: 30px;
+  color: #333;
+}
+
+.new-request-button {
+  padding: 11px 20px;
+  background-color: white;
+  border: 1px solid #777;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.new-request-button:hover {
+  background-color: #f2f2f2;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.request-row {
+  display: grid;
+  grid-template-columns: 105px 1fr 150px 50px;
+  gap: 25px;
+  align-items: center;
+
+  min-height: 105px;
+  padding: 10px 0;
+}
+
+.request-image {
+  width: 105px;
+  height: 88px;
+  background-color: #e0e0e0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #888;
+  font-size: 14px;
+}
+
+.request-info h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #333;
+}
+
+.request-device {
+  margin: 0 0 6px;
+  font-size: 17px;
+  color: #444;
+}
+
+.request-description {
+  margin: 0;
+  color: #555;
+  font-size: 16px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  max-width: 450px;
+}
+
+.request-meta {
+  text-align: center;
+}
+
+.request-status {
+  margin: 0 0 10px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.request-date {
+  margin: 0;
+  font-size: 16px;
+  color: #444;
+}
+
+.details-button {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #777;
+  background-color: white;
+
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.details-button:hover {
+  background-color: #f2f2f2;
+}
+
+.empty-message {
+  margin-top: 40px;
+  text-align: center;
+  color: #555;
+}
+
+.requests-error {
+  margin-top: 40px;
+  text-align: center;
+  color: #b00020;
+}
+
+@media (max-width: 750px) {
+  .request-row {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .request-image {
+    width: 80px;
+    height: 70px;
+  }
+
+  .request-meta,
+  .details-button {
+    grid-column: 2;
+  }
+
+  .request-meta {
+    text-align: left;
+  }
+}

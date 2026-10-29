@@ -1,7 +1,8 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NewRequest from "./pages/NewRequest";
+import Home from "./pages/Home";
 import "./styles/Header.css";
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       </header>
 
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/new-request" element={<NewRequest />} />

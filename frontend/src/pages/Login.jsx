@@ -43,13 +43,7 @@ function Login() {
 
       localStorage.setItem("token", data.token);
 
-      if (data.user.role === "ADMIN") {
-        navigate("/admin");
-      } else if (data.user.role === "TECHNICIAN") {
-        navigate("/technician");
-      } else {
-        navigate("/customer");
-      }
+      navigate("/");
     } catch (error) {
       console.error(error);
       setError("Napaka pri povezavi s strežnikom.");
