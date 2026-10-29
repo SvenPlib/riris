@@ -33,10 +33,10 @@ CREATE TYPE appliance_type AS ENUM (
 CREATE TABLE service_requests (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
-  description TEXT,
+  description TEXT NOT NULL,
   appliance_type appliance_type NOT NULL,
-  brand VARCHAR(100),
-  model VARCHAR(100),
+  brand VARCHAR(100) NOT NULL,
+  model VARCHAR(100) NOT NULL,
   status request_status NOT NULL DEFAULT 'NEW',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
