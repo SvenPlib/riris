@@ -1,13 +1,22 @@
-import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import "./styles/Auth.css";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      <header>
-        <h1>TEST</h1>
+    <div className="app">
+      <header className="auth-header">
+        <h1>ServisDesk</h1>
       </header>
+
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
     </div>
   );
-};
+}
 
 export default App;
