@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CustomerRequests from "../components/CustomerRequests";
+import RequestsList from "../components/RequestsList";
 
 function Home() {
   const [user, setUser] = useState(null);
@@ -38,19 +38,7 @@ function Home() {
     return <p>Uporabnik ni prijavljen.</p>;
   }
 
-  if (user.role === "CUSTOMER") {
-    return <CustomerRequests />;
-  }
-
-  if (user.role === "TECHNICIAN") {
-    return <TechnicianRequests />;
-  }
-
-  if (user.role === "ADMIN") {
-    return <AdminRequests />;
-  }
-
-  return <p>Neveljavna uporabniška vloga.</p>;
+  return <RequestsList role={user.role} />;
 }
 
 export default Home;

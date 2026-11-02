@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/CustomerRequests.css";
 
-function CustomerRequests() {
+function RequestsList({ role }) {
   const navigate = useNavigate();
 
   const [requests, setRequests] = useState([]);
@@ -13,7 +13,6 @@ function CustomerRequests() {
     const fetchRequests = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const response = await fetch("http://localhost:3000/api/requests", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,21 +46,33 @@ function CustomerRequests() {
     return <p className="requests-error">{error}</p>;
   }
 
+  let title = "";
+
+  if (role === "CUSTOMER") {
+    title = "Moji zahtevki";
+  } else if (role === "TECHNICIAN") {
+    title = "Dodeljeni zahtevki";
+  } else if (role === "ADMIN") {
+    title = "Vsi zahtevki";
+  }
+
   return (
     <div className="requests-page">
       <div className="requests-header">
-        <h2>Moji zahtevki</h2>
+        <h2>{title}</h2>
 
-        <button
-          className="new-request-button"
-          onClick={() => navigate("/new-request")}
-        >
-          + Nov zahtevek
-        </button>
+        {role === "CUSTOMER" && (
+          <button
+            className="new-request-button"
+            onClick={() => navigate("/new-request")}
+          >
+            + Nov zahtevek
+          </button>
+        )}
       </div>
 
       {requests.length === 0 ? (
-        <p className="empty-message">Trenutno še nimate servisnih zahtevkov.</p>
+        <p className="empty-message">Ni servisnih zahtevkov za prikaz.</p>
       ) : (
         <div className="requests-list">
           {requests.map((request) => (
@@ -100,4 +111,4 @@ function CustomerRequests() {
   );
 }
 
-export default CustomerRequests;
+export default RequestsList;
