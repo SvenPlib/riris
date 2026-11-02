@@ -246,4 +246,109 @@ router.get(
   },
 );
 
+router.patch(
+  "/:id/status",
+  authenticateToken,
+  authorizeRoles("TECHNICIAN", "ADMIN"),
+  async (req, res) => {
+    const requestId = req.params.id;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        message: "Novi status je obvezen.",
+      });
+    }
+
+    try {
+      const requestResult = await pool.query(
+        `
+        SELECT
+          id,
+          status,
+          technician_id
+        FROM service_requests
+        WHERE id = $1
+        `,
+        [requestId],
+      );
+
+      if (requestResult.rows.length === 0) {
+        return res.status(404).json({
+          message: "Servisni zahtevek ne obstaja.",
+        });
+      }
+
+      const serviceRequest = requestResult.rows[0];
+
+      if (
+        req.user.role === "TECHNICIAN" &&
+        serviceRequest.technician_id !== req.user.id
+      ) {
+        return res.status(403).json({
+          message: "Ta servisni zahtevek vam ni dodeljen.",
+        });
+      }
+
+      let transitionAllowed = false;
+
+      // TECHNICIAN: ASSIGNED -> IN_PROGRESS
+      if (
+        req.user.role === "TECHNICIAN" &&
+        serviceRequest.status === "ASSIGNED" &&
+        status === "IN_PROGRESS"
+      ) {
+        transitionAllowed = true;
+      }
+
+      // TECHNICIAN: IN_PROGRESS -> RESOLVED
+      if (
+        req.user.role === "TECHNICIAN" &&
+        serviceRequest.status === "IN_PROGRESS" &&
+        status === "RESOLVED"
+      ) {
+        transitionAllowed = true;
+      }
+
+      // ADMIN: RESOLVED -> CLOSED
+      if (
+        req.user.role === "ADMIN" &&
+        serviceRequest.status === "RESOLVED" &&
+        status === "CLOSED"
+      ) {
+        transitionAllowed = true;
+      }
+
+      if (!transitionAllowed) {
+        return res.status(400).json({
+          message: "Ta sprememba statusa ni dovoljena.",
+        });
+      }
+
+      const updatedRequest = await pool.query(
+        `
+        UPDATE service_requests
+        SET
+          status = $1,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $2
+        RETURNING *
+        `,
+        [status, requestId],
+      );
+
+      return res.status(200).json({
+        message: "Status servisnega zahtevka je bil uspešno spremenjen.",
+        request: updatedRequest.rows[0],
+      });
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        message: "Napaka pri spreminjanju statusa servisnega zahtevka.",
+      });
+    }
+  },
+);
+
 module.exports = router;
