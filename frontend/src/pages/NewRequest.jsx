@@ -84,7 +84,9 @@ function NewRequest() {
               onChange={handleChange}
               required
             >
-              <option value="">Izberi vrsto aparata</option>
+              <option value="" disabled>
+                Izberi vrsto aparata
+              </option>
               <option value="REFRIGERATOR">Hladilnik</option>
               <option value="WASHING_MACHINE">Pralni stroj</option>
               <option value="DISHWASHER">Pomivalni stroj</option>

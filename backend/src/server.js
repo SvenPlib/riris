@@ -4,6 +4,7 @@ const app = express();
 const PORT = process.env.PORT;
 const authRoutes = require("./routes/auth");
 const requestRoutes = require("./routes/request");
+const userRoutes = require("./routes/user");
 
 app.use(express.json());
 app.use(
@@ -14,6 +15,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "ServisDesk backend deluje." });
