@@ -73,7 +73,7 @@ router.post(
 router.get(
   "/",
   authenticateToken,
-  authorizeRoles("CUSTOMER", "TECHNICIAN"),
+  authorizeRoles("CUSTOMER", "TECHNICIAN", "ADMIN"),
   async (req, res) => {
     try {
       let query = `
@@ -105,15 +105,12 @@ router.get(
       }
 
       query += " ORDER BY created_at DESC";
-
       const result = await pool.query(query, values);
-
       return res.status(200).json({
         requests: result.rows,
       });
     } catch (error) {
       console.error(error);
-
       return res.status(500).json({
         message: "Napaka pri pridobivanju servisnih zahtevkov.",
       });
