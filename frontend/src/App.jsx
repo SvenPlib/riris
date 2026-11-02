@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NewRequest from "./pages/NewRequest";
 import Home from "./pages/Home";
+import RequestDetails from "./components/RequestDetails";
 import "./styles/Header.css";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/new-request" element={<NewRequest />} />
+        <Route path="/requests/:id" element={<RequestDetails />} />
       </Routes>
     </div>
   );
