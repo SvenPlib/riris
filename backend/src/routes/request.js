@@ -118,4 +118,74 @@ router.get(
   },
 );
 
+router.patch(
+  "/:id/assign",
+  authenticateToken,
+  authorizeRoles("ADMIN"),
+  async (req, res) => {
+    const requestId = req.params.id;
+    const { technicianId } = req.body;
+
+    if (!technicianId) {
+      return res.status(400).json({
+        message: "Serviser mora biti izbran.",
+      });
+    }
+
+    try {
+      const technicianResult = await pool.query(
+        `
+        SELECT id, role
+        FROM users
+        WHERE id = $1
+        `,
+        [technicianId],
+      );
+
+      if (technicianResult.rows.length === 0) {
+        return res.status(404).json({
+          message: "Serviser ne obstaja.",
+        });
+      }
+
+      const technician = technicianResult.rows[0];
+
+      if (technician.role !== "TECHNICIAN") {
+        return res.status(400).json({
+          message: "Izbrani uporabnik ni serviser.",
+        });
+      }
+
+      const requestResult = await pool.query(
+        `
+        UPDATE service_requests
+        SET
+          technician_id = $1,
+          status = 'ASSIGNED',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $2
+        RETURNING *
+        `,
+        [technicianId, requestId],
+      );
+
+      if (requestResult.rows.length === 0) {
+        return res.status(404).json({
+          message: "Servisni zahtevek ne obstaja.",
+        });
+      }
+
+      return res.status(200).json({
+        message: "Servisni zahtevek je bil uspešno dodeljen serviserju.",
+        request: requestResult.rows[0],
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: "Napaka pri dodeljevanju servisnega zahtevka.",
+      });
+    }
+  },
+);
+
 module.exports = router;
