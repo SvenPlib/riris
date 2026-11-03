@@ -321,6 +321,12 @@ router.patch(
         serviceRequest.status === "IN_PROGRESS" &&
         status === "RESOLVED"
       ) {
+        if (!comment || comment.trim() === "") {
+          return res.status(400).json({
+            message: "Zaključni komentar je obvezen.",
+          });
+        }
+
         transitionAllowed = true;
       }
 
