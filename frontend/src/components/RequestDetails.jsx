@@ -175,6 +175,11 @@ function RequestDetails() {
     try {
       const token = localStorage.getItem("token");
 
+      if (newStatus === "RESOLVED" && (!comment || comment.trim() === "")) {
+        setError("Zaključni komentar je obvezen.");
+        return;
+      }
+
       const response = await fetch(
         `http://localhost:3000/api/requests/${id}/status`,
         {
