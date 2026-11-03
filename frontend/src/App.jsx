@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NewRequest from "./pages/NewRequest";
@@ -10,7 +10,9 @@ function App() {
   return (
     <div className="app">
       <header className="auth-header">
-        <h1>ServisDesk</h1>
+        <Link to="/" className="header-logo">
+          <h1>ServisDesk</h1>
+        </Link>
       </header>
 
       <Routes>
