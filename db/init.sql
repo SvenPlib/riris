@@ -43,3 +43,13 @@ CREATE TABLE service_requests (
   customer_id INTEGER NOT NULL REFERENCES users(id),
   technician_id INTEGER REFERENCES users(id)
 );
+
+CREATE TABLE service_history (
+  id SERIAL PRIMARY KEY,
+  old_status request_status,
+  new_status request_status,
+  comment TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  service_request_id INTEGER NOT NULL REFERENCES service_requests(id),
+  user_id INTEGER NOT NULL REFERENCES users(id)
+);

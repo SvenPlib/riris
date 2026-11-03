@@ -124,7 +124,7 @@ router.patch(
   authorizeRoles("ADMIN"),
   async (req, res) => {
     const requestId = req.params.id;
-    const { technicianId } = req.body;
+    const { technicianId, comment } = req.body;
 
     if (!technicianId) {
       return res.status(400).json({
@@ -173,6 +173,20 @@ router.patch(
         return res.status(404).json({
           message: "Servisni zahtevek ne obstaja.",
         });
+      }
+
+      if (comment && comment.trim() !== "") {
+        await pool.query(
+          `
+          INSERT INTO service_history (
+            comment,
+            service_request_id,
+            user_id
+          )
+          VALUES ($1, $2, $3)
+          `,
+          [comment.trim(), requestId, req.user.id],
+        );
       }
 
       return res.status(200).json({
@@ -252,7 +266,7 @@ router.patch(
   authorizeRoles("TECHNICIAN", "ADMIN"),
   async (req, res) => {
     const requestId = req.params.id;
-    const { status } = req.body;
+    const { status, comment } = req.body;
 
     if (!status) {
       return res.status(400).json({
@@ -336,6 +350,20 @@ router.patch(
         `,
         [status, requestId],
       );
+
+      if (comment && comment.trim() !== "") {
+        await pool.query(
+          `
+        INSERT INTO service_history (
+          comment,
+          service_request_id,
+          user_id
+        )
+        VALUES ($1, $2, $3)
+        `,
+          [comment.trim(), requestId, req.user.id],
+        );
+      }
 
       return res.status(200).json({
         message: "Status servisnega zahtevka je bil uspešno spremenjen.",
