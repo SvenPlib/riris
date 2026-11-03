@@ -145,6 +145,7 @@ function RequestDetails() {
           },
           body: JSON.stringify({
             technicianId: Number(technicianId),
+            comment: comment,
           }),
         },
       );
@@ -158,6 +159,7 @@ function RequestDetails() {
 
       setRequest(data.request);
       setSuccess("Zahtevek je bil uspešno dodeljen serviserju.");
+      setComment("");
     } catch (error) {
       console.error(error);
       setError("Napaka pri povezavi s strežnikom.");
@@ -183,6 +185,7 @@ function RequestDetails() {
           },
           body: JSON.stringify({
             status: newStatus,
+            comment: comment,
           }),
         },
       );
@@ -196,6 +199,7 @@ function RequestDetails() {
 
       setRequest(data.request);
       setSuccess("Status zahtevka je bil uspešno spremenjen.");
+      setComment("");
     } catch (error) {
       console.error(error);
       setError("Napaka pri povezavi s strežnikom.");
@@ -309,6 +313,14 @@ function RequestDetails() {
                     ))}
                   </select>
 
+                  <label htmlFor="comment">Komentar</label>
+                  <textarea
+                    id="comment"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Dodaj komentar..."
+                  />
+
                   <button
                     className="confirm-button"
                     onClick={handleAssign}
@@ -320,30 +332,60 @@ function RequestDetails() {
               )}
 
               {canTechnicianStart && (
-                <button
-                  className="confirm-button"
-                  onClick={() => handleStatusChange("IN_PROGRESS")}
-                >
-                  Prevzemi zahtevek
-                </button>
+                <>
+                  <label htmlFor="comment">Komentar</label>
+                  <textarea
+                    id="comment"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Dodaj komentar..."
+                  />
+
+                  <button
+                    className="confirm-button"
+                    onClick={() => handleStatusChange("IN_PROGRESS")}
+                  >
+                    Prevzemi zahtevek
+                  </button>
+                </>
               )}
 
               {canTechnicianResolve && (
-                <button
-                  className="confirm-button"
-                  onClick={() => handleStatusChange("RESOLVED")}
-                >
-                  Označi kot rešeno
-                </button>
+                <>
+                  <label htmlFor="comment">Komentar</label>
+                  <textarea
+                    id="comment"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Dodaj komentar..."
+                  />
+
+                  <button
+                    className="confirm-button"
+                    onClick={() => handleStatusChange("RESOLVED")}
+                  >
+                    Označi kot rešeno
+                  </button>
+                </>
               )}
 
               {canAdminClose && (
-                <button
-                  className="confirm-button"
-                  onClick={() => handleStatusChange("CLOSED")}
-                >
-                  Zaključi zahtevek
-                </button>
+                <>
+                  <label htmlFor="comment">Komentar</label>
+                  <textarea
+                    id="comment"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Dodaj komentar..."
+                  />
+
+                  <button
+                    className="confirm-button"
+                    onClick={() => handleStatusChange("CLOSED")}
+                  >
+                    Zaključi zahtevek
+                  </button>
+                </>
               )}
 
               {error && <p className="details-error">{error}</p>}
