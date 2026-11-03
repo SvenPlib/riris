@@ -16,6 +16,26 @@ function RequestDetails() {
   const [loading, setLoading] = useState(true);
   const [assigning, setAssigning] = useState(false);
 
+  const canAdminAssign =
+    user?.role === "ADMIN" &&
+    request?.status === "NEW" &&
+    !request?.technician_id;
+
+  const canTechnicianStart =
+    user?.role === "TECHNICIAN" && request?.status === "ASSIGNED";
+
+  const canTechnicianResolve =
+    user?.role === "TECHNICIAN" && request?.status === "IN_PROGRESS";
+
+  const canAdminClose =
+    user?.role === "ADMIN" && request?.status === "RESOLVED";
+
+  const showActionsPanel =
+    canAdminAssign ||
+    canTechnicianStart ||
+    canTechnicianResolve ||
+    canAdminClose;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -146,6 +166,42 @@ function RequestDetails() {
     }
   };
 
+  const handleStatusChange = async (newStatus) => {
+    setError("");
+    setSuccess("");
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:3000/api/requests/${id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Sprememba statusa ni uspela.");
+        return;
+      }
+
+      setRequest(data.request);
+      setSuccess("Status zahtevka je bil uspešno spremenjen.");
+    } catch (error) {
+      console.error(error);
+      setError("Napaka pri povezavi s strežnikom.");
+    }
+  };
+
   if (loading) {
     return <p className="details-message">Nalaganje zahtevka...</p>;
   }
@@ -166,7 +222,7 @@ function RequestDetails() {
 
       <div
         className={
-          user?.role === "ADMIN"
+          showActionsPanel
             ? "details-layout"
             : "details-layout details-layout-single"
         }
@@ -225,53 +281,74 @@ function RequestDetails() {
           </div>
         </div>
 
-        {user?.role === "ADMIN" && (
+        {showActionsPanel && (
           <div className="actions-panel">
             <h3 className="actions-title">Akcije</h3>
 
             <div className="actions-content">
-              <label className="action-label" htmlFor="technician">
-                Dodeli serviserja
-              </label>
-              <select
-                id="technician"
-                className="action-select"
-                value={technicianId}
-                onChange={(event) => setTechnicianId(event.target.value)}
-              >
-                <option value="" disabled>
-                  Izberi serviserja
-                </option>
+              {canAdminAssign && (
+                <>
+                  <label className="action-label" htmlFor="technician">
+                    Dodeli serviserja
+                  </label>
 
-                {technicians.map((technician) => (
-                  <option key={technician.id} value={technician.id}>
-                    {technician.first_name} {technician.last_name}
-                  </option>
-                ))}
-              </select>
+                  <select
+                    id="technician"
+                    className="action-select"
+                    value={technicianId}
+                    onChange={(event) => setTechnicianId(event.target.value)}
+                  >
+                    <option value="" disabled>
+                      Izberi serviserja
+                    </option>
 
-              <label className="comment-label" htmlFor="comment">
-                Komentar
-              </label>
+                    {technicians.map((technician) => (
+                      <option key={technician.id} value={technician.id}>
+                        {technician.first_name} {technician.last_name}
+                      </option>
+                    ))}
+                  </select>
 
-              <textarea
-                id="comment"
-                className="comment-input"
-                value={comment}
-                onChange={(event) => setComment(event.target.value)}
-              />
+                  <button
+                    className="confirm-button"
+                    onClick={handleAssign}
+                    disabled={assigning}
+                  >
+                    {assigning ? "Dodeljevanje..." : "Potrdi dodelitev"}
+                  </button>
+                </>
+              )}
+
+              {canTechnicianStart && (
+                <button
+                  className="confirm-button"
+                  onClick={() => handleStatusChange("IN_PROGRESS")}
+                >
+                  Prevzemi zahtevek
+                </button>
+              )}
+
+              {canTechnicianResolve && (
+                <button
+                  className="confirm-button"
+                  onClick={() => handleStatusChange("RESOLVED")}
+                >
+                  Označi kot rešeno
+                </button>
+              )}
+
+              {canAdminClose && (
+                <button
+                  className="confirm-button"
+                  onClick={() => handleStatusChange("CLOSED")}
+                >
+                  Zaključi zahtevek
+                </button>
+              )}
 
               {error && <p className="details-error">{error}</p>}
 
               {success && <p className="details-success">{success}</p>}
-
-              <button
-                className="confirm-button"
-                onClick={handleAssign}
-                disabled={assigning}
-              >
-                {assigning ? "Dodeljevanje..." : "Potrdi dodelitev"}
-              </button>
             </div>
           </div>
         )}
